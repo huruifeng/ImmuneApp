@@ -13,7 +13,7 @@ from keras.layers import LSTM, Bidirectional
 from keras.layers import Conv1D, MaxPooling1D
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
-from sklearn.metrics import auc, average_precision_score, roc_curve,  precision_recall_curve
+from sklearn.metrics import auc, roc_curve, average_precision_score, precision_recall_curve
 from sklearn.model_selection import KFold
 
 np.random.seed(1234)
@@ -105,40 +105,38 @@ def train_cross_validation(dataset):
         allylable = np.append(allylable, np.array(val_label))
         del model
 
-    lable_probas = np.c_[allylable, allprobas]
     with open(folder + 'Evalution_lable_probas.txt', "w+") as f:
-        for j in range(len(lable_probas)):
-            f.write(str(lable_probas[j][0]) + '\t')
-            f.write(str(lable_probas[j][1]) + '\n')
+        for j in range(len(allprobas)):
+            f.write(str(allylable[j]) + '\t' +str(allprobas[j]) + '\n')
 
-    font1 = {'family': 'Times New Roman',
+    font = {'family': 'Times New Roman',
              'weight': 'normal',
              'size': 16}
-    figsize = 6.2, 6.2
+    figsize = (7, 7)
 
     # ROC_figure
-    figure1, ax1 = plt.subplots(figsize=figsize)
-    ax1.tick_params(labelsize=18)
-    labels = ax1.get_xticklabels() + ax1.get_yticklabels()
+    figure, ax = plt.subplots(figsize=figsize)
+    ax.tick_params(labelsize=18)
+    labels = ax.get_xticklabels() + ax.get_yticklabels()
     [label.set_fontname('Times New Roman') for label in labels]
 
-    fpr, tpr, thresholds = roc_curve(allylable, allprobas_)
+    fpr, tpr, thresholds = roc_curve(allylable, allprobas)
     roc_auc = auc(fpr, tpr)
     print(roc_auc)
 
-    ax1.plot(fpr, tpr, color='b',
+    ax.plot(fpr, tpr, color='b',
              label=r'Mean ROC (AUC = %0.4f)' % (roc_auc),
              lw=2, alpha=.8)
-    ax1.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
+    ax.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
              label='Luck', alpha=.8)
-    ax1.set_xlim([-0.05, 1.05])
-    ax1.set_ylim([-0.05, 1.05])
-    ax1.set_xlabel('False Positive Rate', font1)
-    ax1.set_ylabel('True Positive Rate', font1)
-    # title1 = 'Cross Validated ROC Curve'
-    # ax1.set_title(title1, font1)
-    ax1.legend(loc="lower right")
-    figure1.savefig(folder + '5_fold_roc.png', dpi=300, bbox_inches='tight')
+    ax.set_xlim([-0.05, 1.05])
+    ax.set_ylim([-0.05, 1.05])
+    ax.set_xlabel('False Positive Rate', font)
+    ax.set_ylabel('True Positive Rate', font)
+    title = 'ROC Curve'
+    ax.set_title(title, font)
+    ax.legend(loc="lower right")
+    figure.savefig(folder + '5_fold_roc.png', dpi=300, bbox_inches='tight')
 
     # PR_figure
     figure2, ax2 = plt.subplots(figsize=figsize)
@@ -146,17 +144,17 @@ def train_cross_validation(dataset):
     labels = ax2.get_xticklabels() + ax2.get_yticklabels()
     [label.set_fontname('Times New Roman') for label in labels]
 
-    precision, recall, _ = precision_recall_curve(allylable, allprobas_)
+    precision, recall, _ = precision_recall_curve(allylable, allprobas)
     ax2.plot(recall, precision, color='b',
-             label=r'Precision-Recall (AUC = %0.4f)' % (average_precision_score(allylable, allprobas_)),
+             label=r'Precision-Recall (AUC = %0.4f)' % (average_precision_score(allylable, allprobas)),
              lw=2, alpha=.8)
 
     ax2.set_xlim([-0.05, 1.05])
     ax2.set_ylim([-0.05, 1.05])
-    ax2.set_xlabel('Recall', font1)
-    ax2.set_ylabel('Precision', font1)
-    # title2 = 'Cross Validated PR Curve'
-    # ax2.set_title(title2, font1)
+    ax2.set_xlabel('Recall', font)
+    ax2.set_ylabel('Precision', font)
+    title2 = 'PR Curve'
+    ax2.set_title(title2, font)
     ax2.legend(loc="lower left")
     figure2.savefig(folder + '5_fold_pr.png', dpi=300, bbox_inches='tight')
 
@@ -165,4 +163,4 @@ if __name__ == '__main__':
     with open('data/encoded_allele_peptide.pkl', 'rb') as handle:
         encoded_data = pickle.load(handle)
     encoded_data = np.array(encoded_data)
-    train_cross_validation()
+    train_cross_validation(encoded_data)
