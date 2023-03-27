@@ -26,6 +26,7 @@ binding_data2.loc[:,"dataset"] = "external"
 allele_ls = [i[:-3]+":"+i[-2:] for i in binding_data2.allele.tolist()]
 binding_data2.loc[:,"allele"] = allele_ls
 combined_df = pd.concat([binding_data1,binding_data2],axis=0)
+combined_df.drop_duplicates(subset=["allele", "peptide", "peplen", "affinity"])
 combined_df.loc[:,"score"] = 1-(np.log10(combined_df.affinity)/np.log10(50000))
 combined_df.to_csv("data/binding_data.csv",index=False)
 

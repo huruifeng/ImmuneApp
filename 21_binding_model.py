@@ -1,10 +1,13 @@
 import os
+import pickle
+
+import h5py
 import numpy as np
 
 import random
 
 from math import log
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, Dense, Permute, Flatten, Concatenate, Dot, TimeDistributed, Activation
 from keras.layers import LSTM, Bidirectional
 from keras.layers import Conv1D, MaxPooling1D
@@ -18,19 +21,10 @@ np.random.seed(1234)
 import matplotlib.pyplot as plt
 
 #################################
-parameters = {
-    "batch_size": 64,
-    "pep_filters": 128,
-    "hla_filters": 128,
-    "kernel_size": 2,
-    "optimizer": "adam"
-}
-
-
 def creat_binding_affinity_model():
-    pep_filters = parameters['pep_filters']
-    hla_filters = parameters['hla_filters']
-    kernel_size = parameters['kernel_size']
+    pep_filters = 128
+    hla_filters = 128
+    kernel_size = 2
 
     pep_input = Input(shape=(26, 20),name="pep_input") ## peptide length
     pep_conv = Conv1D(pep_filters, kernel_size, padding='same', activation='relu', strides=1,name="pep_conv")(pep_input)
@@ -66,96 +60,52 @@ def creat_binding_affinity_model():
     model = Model(inputs=[pep_input, hla_input], outputs=out)
     return model
 
-def main_model_training_cross_validation():
-    path_train = "binding_affinity_train1"  # change as your binding_affinity training dataset
-    data_dict = transfomer_binding_affinity_matrix(path_train, pseq_dict, pseq_dict_matrix)
-
-    path_external = "binding_affinity_train2"  # change as your external binding_affinity training dataset
-    external_dict = transfomer_binding_affinity_matrix_external(path_external, pseq_dict, pseq_dict_matrix)
-
-    es = EarlyStopping(monitor='val_mse', mode='min', verbose=1, patience=5)
-
-    folder = "your folder"  # change as your saved folder
+def train_cross_validation(dataset):
+    folder = "results"  # change as your saved folder
     if not os.path.isdir(folder):
         os.makedirs(folder)
 
-        # merge the training datasets
-    for allele in sorted(data_dict.keys()):
-        if allele in external_dict.keys():
-            print(allele)
-            data_dict[allele] = data_dict[allele] + external_dict[allele]
-            unique_seq = []
-            unique_data = []
-            for dt in data_dict[allele]:
-                if dt[4] not in unique_seq:
-                    unique_data.append(dt)
-                    unique_seq.append(dt[4])
-            print("unique", len(unique_data))
-            data_dict[allele] = unique_data
+    encoded_pep = np.array([i[0] for i in dataset])
+    encoded_hla = np.array([i[1] for i in dataset])
+    encoded_score = np.array([i[2] for i in dataset])
 
     n_splits = 5
-    training_data = []
-    test_dicts = []
-    cross_validation = KFold(n_splits=n_splits, random_state=42)
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=12)
 
-    for split in range(n_splits):
-        training_data.append([])
-        test_dicts.append([])
-
-    for allele in data_dict.keys():
-        allele_data = data_dict[allele]
-        random.shuffle(allele_data)
-        allele_data = np.array(allele_data)
-        split = 0
-
-        if len(allele_data) < 5:
-            continue
-
-        for training_indices, test_indices in cross_validation.split(allele_data):
-            training_data[split].extend(allele_data[training_indices])
-            test_dicts[split].extend(allele_data[test_indices])
-            split += 1
-
-    for split in range(n_splits):
-        random.shuffle(training_data[split])
-
-    allprobas_ = np.array([])
+    allprobas = np.array([])
     allylable = np.array([])
 
-    for i_splits in range(n_splits):
-        train_splits = training_data[i_splits]
-        [training_pep, training_mhc, training_target] = [[i[j] for i in train_splits] for j in range(3)]
+    for i_splits, (train_index, val_index) in enumerate(kf.split(encoded_pep)):
+        train_pep, train_hla, train_target = encoded_pep[train_index],encoded_hla[train_index],encoded_score[train_index]
+        val_pep, val_hla, val_target = encoded_pep[val_index],encoded_hla[val_index],encoded_score[val_index]
 
-        test_splits = test_dicts[i_splits]
-        [validation_pep, validation_mhc, validation_target] = [[i[j] for i in test_splits] for j in range(3)]
+        es = EarlyStopping(monitor='val_mse', mode='min', verbose=1, patience=5)
+        mc = ModelCheckpoint(folder + '/model_%s.h5' % str(i_splits), monitor='val_mse', mode='min', verbose=1, save_best_only=True)
 
-        mc = ModelCheckpoint(folder + '/model_%s.h5' % str(i_splits), monitor='val_mse', mode='min', verbose=1,
-                             save_best_only=True)
-        model = creat_binding_affinity_model(training_pep, training_mhc)
+        model = creat_binding_affinity_model()
         model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse'])
         model.summary()
 
         model_json = model.to_json()
-        with open(folder + "model_" + str(i_splits) + ".json", "w") as json_file:
+        with open(folder + "/model_" + str(i_splits) + ".json", "w") as json_file:
             json_file.write(model_json)
 
-        model.fit([training_pep, training_mhc],
-                  training_target,
+        model.fit([train_pep, train_hla],train_target,
                   batch_size=128,
                   epochs=500,
                   shuffle=True,
                   callbacks=[es, mc],
-                  validation_data=([validation_pep, validation_mhc], validation_target),
+                  validation_data=([val_pep, val_hla], val_target),
                   verbose=1)
 
         saved_model = load_model(folder + '/model_%s.h5' % str(i_splits))
-        probas_ = saved_model.predict([validation_pep, validation_mhc])
-        test_label = [1 if aff > 1 - log(500) / log(50000) else 0 for aff in validation_target]
-        allprobas_ = np.append(allprobas_, probas_)
-        allylable = np.append(allylable, np.array(test_label))
+        probas = saved_model.predict([val_pep, val_hla])
+        val_label = [1 if aff > (1 - log(500) / log(50000)) else 0 for aff in val_target]
+        allprobas = np.append(allprobas, probas)
+        allylable = np.append(allylable, np.array(val_label))
         del model
 
-    lable_probas = np.c_[allylable, allprobas_]
+    lable_probas = np.c_[allylable, allprobas]
     with open(folder + 'Evalution_lable_probas.txt', "w+") as f:
         for j in range(len(lable_probas)):
             f.write(str(lable_probas[j][0]) + '\t')
@@ -212,4 +162,7 @@ def main_model_training_cross_validation():
 
 
 if __name__ == '__main__':
-    main_model_training_cross_validation()
+    with open('data/encoded_allele_peptide.pkl', 'rb') as handle:
+        encoded_data = pickle.load(handle)
+    encoded_data = np.array(encoded_data)
+    train_cross_validation()

@@ -1,6 +1,6 @@
 import json
+import pickle
 
-import h5py
 import numpy as np
 import pandas as pd
 from utils import *
@@ -68,18 +68,8 @@ def hla_peptide_pairs_encode(binding_pairs, allele_pseudo_seqs, blosum_matrix):
     return encoded_data
 
 encoded_data = hla_peptide_pairs_encode(binding_pairs,pseudo_seq_dict,blosum_matrix)
-with h5py.File('data/encoded_allele_peptide.h5', 'w') as f:
-    encoded_peps = [i[0] for i in encoded_data]
-    encoded_alleles = [i[1] for i in encoded_data]
-    encoded_scores = [i[2] for i in encoded_data]
-    allele_names = [i[3] for i in encoded_data]
-    allele_seqs = [i[4] for i in encoded_data]
-    pep_ls = [i[5] for i in encoded_data]
-    ba_ls = [i[6] for i in encoded_data]
-    dset1 = f.create_dataset("encoded_peps", data = encoded_peps)
-    dset2 = f.create_dataset("encoded_alleles", data = encoded_alleles)
-    dset3 = f.create_dataset("encoded_scores", data = encoded_scores)
-    dset4 = f.create_dataset("allele_names", data = allele_names)
-    dset5 = f.create_dataset("allele_seqs", data = allele_seqs)
-    dset6 = f.create_dataset("pep_ls", data = pep_ls)
-    dset7 = f.create_dataset("ba_ls", data = ba_ls)
+with open('data/encoded_allele_peptide.pkl', 'wb') as handle:
+    pickle.dump(encoded_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+
