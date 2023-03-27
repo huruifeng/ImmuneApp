@@ -12,6 +12,7 @@ from keras.layers import Input, Dense, Permute, Flatten, Concatenate, Dot, TimeD
 from keras.layers import LSTM, Bidirectional
 from keras.layers import Conv1D, MaxPooling1D
 from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.utils import plot_model
 
 from sklearn.metrics import auc, roc_curve, average_precision_score, precision_recall_curve
 from sklearn.model_selection import KFold
@@ -35,7 +36,7 @@ def creat_binding_affinity_model():
     hla_conv = Conv1D(hla_filters, kernel_size, padding='same', activation='relu', strides=1, name="hla_conv")(hla_input)
     hla_maxpool = MaxPooling1D(name="hla_maxpoll")(hla_conv)
     hla_lstm = Bidirectional(LSTM(64, return_sequences=True), merge_mode='concat',name="hla_bilstm")(hla_maxpool)
-    flat_hla = Flatten(name="pep_flatten")(hla_lstm)
+    flat_hla = Flatten(name="hla_flatten")(hla_lstm)
 
     cat_layer = Concatenate()([flat_pep, flat_hla])
     fc1 = Dense(256, activation="relu")(cat_layer)
@@ -61,7 +62,7 @@ def creat_binding_affinity_model():
     return model
 
 def train_cross_validation(dataset):
-    folder = "results"  # change as your saved folder
+    folder = "results/binding_model"  # change as your saved folder
     if not os.path.isdir(folder):
         os.makedirs(folder)
 
@@ -84,7 +85,8 @@ def train_cross_validation(dataset):
 
         model = creat_binding_affinity_model()
         model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse'])
-        model.summary()
+        # model.summary()
+        plot_model(model, to_file=folder+"/model_plot%s.pdf" % str(i_splits), show_shapes=True,show_layer_activations=True,show_layer_names=True)
 
         model_json = model.to_json()
         with open(folder + "/model_" + str(i_splits) + ".json", "w") as json_file:
@@ -105,7 +107,7 @@ def train_cross_validation(dataset):
         allylable = np.append(allylable, np.array(val_label))
         del model
 
-    with open(folder + 'Evalution_lable_probas.txt', "w+") as f:
+    with open(folder + '/Evalution_lable_probas.txt', "w+") as f:
         for j in range(len(allprobas)):
             f.write(str(allylable[j]) + '\t' +str(allprobas[j]) + '\n')
 
@@ -136,7 +138,7 @@ def train_cross_validation(dataset):
     title = 'ROC Curve'
     ax.set_title(title, font)
     ax.legend(loc="lower right")
-    figure.savefig(folder + '5_fold_roc.png', dpi=300, bbox_inches='tight')
+    figure.savefig(folder + '/5_fold_roc.png', dpi=300, bbox_inches='tight')
 
     # PR_figure
     figure2, ax2 = plt.subplots(figsize=figsize)
@@ -156,11 +158,11 @@ def train_cross_validation(dataset):
     title2 = 'PR Curve'
     ax2.set_title(title2, font)
     ax2.legend(loc="lower left")
-    figure2.savefig(folder + '5_fold_pr.png', dpi=300, bbox_inches='tight')
+    figure2.savefig(folder + '/5_fold_pr.png', dpi=300, bbox_inches='tight')
 
 
 if __name__ == '__main__':
     with open('data/encoded_allele_peptide.pkl', 'rb') as handle:
         encoded_data = pickle.load(handle)
-    encoded_data = np.array(encoded_data)
+
     train_cross_validation(encoded_data)
