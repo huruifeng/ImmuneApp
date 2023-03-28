@@ -7,7 +7,7 @@ from utils import *
 
 blosum_matrix = read_blosum("data/original_data/blosum50.txt")
 
-with open("data/allele_pseudo_seq.txt", "r") as fp:
+with open("data/allele_pseudo_seq.json", "r") as fp:
     pseudo_seq_dict = json.load(fp)  # encode dict into JSON
 
 binding_df = pd.read_csv("data/binding_data.csv",index_col=None,header=0)

@@ -88,7 +88,7 @@ def pseudo_seq(seq_dict):
 ### allele seq data, fasta format
 allele_seq_dict = allele_seq("data/original_data/hla_prot.fasta")
 pseudo_seq_dict = pseudo_seq(allele_seq_dict)
-with open("data/allele_pseudo_seq.txt", "w") as fp:
+with open("data/allele_pseudo_seq.json", "w") as fp:
     json.dump(pseudo_seq_dict, fp)  # encode dict into JSON
 print("Done writing dict into .json file")
 
