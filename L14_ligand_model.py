@@ -22,10 +22,10 @@ np.random.seed(1234)
 import matplotlib.pyplot as plt
 
 #################################
-def creat_binding_affinity_model():
+def creat_ligand_model():
     pep_filters = 128
     hla_filters = 128
-    kernel_size = 2
+    kernel_size = 5
 
     pep_input = Input(shape=(26, 20),name="pep_input") ## peptide length
     pep_conv = Conv1D(pep_filters, kernel_size, padding='same', activation='relu', strides=1,name="pep_conv")(pep_input)
@@ -40,8 +40,8 @@ def creat_binding_affinity_model():
 
     cat_layer = Concatenate()([flat_pep, flat_hla])
     fc1 = Dense(256, activation="relu")(cat_layer)
-    fc2 = Dense(64, activation="relu")(fc1)
-    fc3 = Dense(16, activation="relu")(fc2)
+    fc2 = Dense(128, activation="relu")(fc1)
+    fc3 = Dense(64, activation="relu")(fc2)
 
     # The attention module
     pep_attention_weights = Flatten()(TimeDistributed(Dense(1))(pep_conv))
@@ -56,13 +56,14 @@ def creat_binding_affinity_model():
 
 
     merge_layer = Concatenate()([hla_attention, pep_attention, fc3])
+    fc4 = Dense(32, activation="relu")(merge_layer)
 
-    out = Dense(1, activation="sigmoid")(merge_layer)
+    out = Dense(1, activation="sigmoid")(fc4)
     model = Model(inputs=[pep_input, hla_input], outputs=out)
     return model
 
 def train_cross_validation(dataset):
-    folder = "results/binding_model"  # change as your saved folder
+    folder = "results/ligand_model"  # change as your saved folder
     if not os.path.isdir(folder):
         os.makedirs(folder)
 
@@ -80,11 +81,11 @@ def train_cross_validation(dataset):
         train_pep, train_hla, train_target = encoded_pep[train_index],encoded_hla[train_index],encoded_score[train_index]
         val_pep, val_hla, val_target = encoded_pep[val_index],encoded_hla[val_index],encoded_score[val_index]
 
-        es = EarlyStopping(monitor='val_mse', mode='min', verbose=1, patience=5)
-        mc = ModelCheckpoint(folder + '/model_%s.h5' % str(i_splits), monitor='val_mse', mode='min', verbose=1, save_best_only=True)
+        es = EarlyStopping(monitor='val_accuracy', mode='min', verbose=1, patience=5)
+        mc = ModelCheckpoint(folder + '/model_%s.h5' % str(i_splits), monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
 
-        model = creat_binding_affinity_model()
-        model.compile(loss='mean_squared_error', optimizer='adam', metrics=['mse'])
+        model = creat_ligand_model()
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         # model.summary()
         plot_model(model, to_file=folder+"/model_plot%s.pdf" % str(i_splits), show_shapes=True,show_layer_activations=True,show_layer_names=True)
 
@@ -93,8 +94,8 @@ def train_cross_validation(dataset):
             json_file.write(model_json)
 
         model.fit([train_pep, train_hla],train_target,
-                  batch_size=128,
-                  epochs=500,
+                  batch_size=5000,
+                  epochs=50,
                   shuffle=True,
                   callbacks=[es, mc],
                   validation_data=([val_pep, val_hla], val_target),
@@ -102,13 +103,12 @@ def train_cross_validation(dataset):
 
         saved_model = load_model(folder + '/model_%s.h5' % str(i_splits))
         probas = saved_model.predict([val_pep, val_hla])
-        val_label = [1 if aff > (1 - log(500) / log(50000)) else 0 for aff in val_target]
         with open(folder + '/eval_lable_probas_%s.txt' % str(i_splits), "w+") as f:
             for j in range(len(probas)):
-                f.write(str(val_label[j]) + '\t' + str(probas[j]) + '\n')
+                f.write(str(val_target[j]) + '\t' + str(probas[j]) + '\n')
 
         allprobas = np.append(allprobas, probas)
-        allylable = np.append(allylable, np.array(val_label))
+        allylable = np.append(allylable, np.array(val_target))
         del model
 
     with open(folder + '/Evalution_lable_probas.txt', "w+") as f:
@@ -130,11 +130,8 @@ def train_cross_validation(dataset):
     roc_auc = auc(fpr, tpr)
     print(roc_auc)
 
-    ax.plot(fpr, tpr, color='b',
-             label=r'Mean ROC (AUC = %0.4f)' % (roc_auc),
-             lw=2, alpha=.8)
-    ax.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',
-             label='Luck', alpha=.8)
+    ax.plot(fpr, tpr, color='b', label=r'Mean ROC (AUC = %0.4f)' % (roc_auc),lw=2, alpha=.8)
+    ax.plot([0, 1], [0, 1], linestyle='--', lw=2, color='r',    label='Luck', alpha=.8)
     ax.set_xlim([-0.05, 1.05])
     ax.set_ylim([-0.05, 1.05])
     ax.set_xlabel('False Positive Rate', font)
@@ -166,7 +163,7 @@ def train_cross_validation(dataset):
 
 
 if __name__ == '__main__':
-    with open('data/encoded_allele_peptide_binding.pkl', 'rb') as handle:
+    with open('data/encoded_allele_peptide_ligand.pkl', 'rb') as handle:
         encoded_data = pickle.load(handle)
 
     train_cross_validation(encoded_data)
