@@ -10,23 +10,22 @@ blosum_matrix = read_blosum("data/original_data/blosum50.txt")
 with open("data/allele_pseudo_seq.json", "r") as fp:
     pseudo_seq_dict = json.load(fp)  # encode dict into JSON
 
-binding_df = pd.read_csv("data/ligand_data.csv",index_col=None,header=0)
+ligand_df = pd.read_csv("data/mhc_ligand_pos_neg.csv",index_col=None,header=0)
 
-allele_ls = binding_df.allele.tolist()
-pep_ls = binding_df.peptide.tolist()
-ba_ls = binding_df.affinity.tolist()
-score_ls = binding_df.score.tolist()
-binding_pairs = list(zip(allele_ls,pep_ls,score_ls,ba_ls))
+allele_ls = ligand_df.Allele.tolist()
+pep_ls = ligand_df.Peptide.tolist()
+label_ls = ligand_df.label.tolist()
+ligand_pairs = list(zip(allele_ls,pep_ls,label_ls))
 
-def hla_peptide_pairs_encode(binding_pairs, allele_pseudo_seqs, blosum_matrix):
+def hla_peptide_pairs_encode(ligand_pairs, allele_pseudo_seqs, blosum_matrix):
     aa={"A":0,"R":1,"N":2,"D":3,"C":4,"Q":5,"E":6,"G":7,"H":8,"I":9,"L":10,"K":11,"M":12,"F":13,"P":14,"S":15,"T":16,"W":17,"Y":18,"V":19}
     encoded_data = []
     pep_length = [8,9,10,11,12,13]
-    for pair_i in binding_pairs:
+    for pair_i in ligand_pairs:
         allele = pair_i[0][4:] #remove the "HLA-" prefix
         pep = pair_i[1] #Sequence of the peptide in the form of a string, like "AAVFPPLEP"
-        score = pair_i[2] # transformed binding affinity values
-        ba = pair_i[3] # transformed binding affinity values
+        label = pair_i[2] # transformed binding affinity values
+
         if allele in allele_pseudo_seqs.keys():
             if set(list(pep)).difference(list('ACDEFGHIKLMNPQRSTVWY')):
                 print('Illegal peptides: AA error')
@@ -61,13 +60,13 @@ def hla_peptide_pairs_encode(binding_pairs, allele_pseudo_seqs, blosum_matrix):
                 allele_blosum.append(blosum_matrix[aa[aa_i]])
             allele_blosum_array = np.array(allele_blosum)
 
-            new_data = [pep_blosum_array, allele_blosum_array, score, allele, allele_seq, pep,ba]
+            new_data = [pep_blosum_array, allele_blosum_array, label, allele, allele_seq, pep]
 
             encoded_data.append(new_data)
     return encoded_data
 
-encoded_data = hla_peptide_pairs_encode(binding_pairs,pseudo_seq_dict,blosum_matrix)
-with open('data/encoded_allele_peptide.pkl', 'wb') as handle:
+encoded_data = hla_peptide_pairs_encode(ligand_pairs,pseudo_seq_dict,blosum_matrix)
+with open('data/encoded_allele_peptide_ligand.pkl', 'wb') as handle:
     pickle.dump(encoded_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 

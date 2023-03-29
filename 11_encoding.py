@@ -68,7 +68,7 @@ def hla_peptide_pairs_encode(binding_pairs, allele_pseudo_seqs, blosum_matrix):
     return encoded_data
 
 encoded_data = hla_peptide_pairs_encode(binding_pairs,pseudo_seq_dict,blosum_matrix)
-with open('data/encoded_allele_peptide.pkl', 'wb') as handle:
+with open('data/encoded_allele_peptide_binding.pkl', 'wb') as handle:
     pickle.dump(encoded_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 

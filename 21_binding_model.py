@@ -162,7 +162,7 @@ def train_cross_validation(dataset):
 
 
 if __name__ == '__main__':
-    with open('data/encoded_allele_peptide.pkl', 'rb') as handle:
+    with open('data/encoded_allele_peptide_binding.pkl', 'rb') as handle:
         encoded_data = pickle.load(handle)
 
     train_cross_validation(encoded_data)
