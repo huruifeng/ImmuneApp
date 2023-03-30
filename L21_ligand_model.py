@@ -4,9 +4,9 @@ import pickle
 import h5py
 import numpy as np
 
-import random
+import tensorflow as tf
 
-from math import log
+from keras.backend import set_session
 from keras.models import Model, load_model
 from keras.layers import Input, Dense, Permute, Flatten, Concatenate, Dot, TimeDistributed, Activation
 from keras.layers import LSTM, Bidirectional
@@ -17,9 +17,17 @@ from keras.utils import plot_model
 from sklearn.metrics import auc, roc_curve, average_precision_score, precision_recall_curve
 from sklearn.model_selection import KFold
 
-np.random.seed(1234)
-
 import matplotlib.pyplot as plt
+
+tf.random.set_seed(12)
+np.random.seed(12)
+
+######
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+config.gpu_options.per_process_gpu_memory_fraction = 0.8
+set_session(tf.Session(config=config))
 
 #################################
 def creat_ligand_model():
@@ -87,7 +95,7 @@ def train_cross_validation(dataset):
         model = creat_ligand_model()
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         # model.summary()
-        plot_model(model, to_file=folder+"/model_plot%s.pdf" % str(i_splits), show_shapes=True,show_layer_activations=True,show_layer_names=True)
+        # plot_model(model, to_file=folder+"/model_plot%s.pdf" % str(i_splits), show_shapes=True,show_layer_activations=True,show_layer_names=True)
 
         model_json = model.to_json()
         with open(folder + "/model_" + str(i_splits) + ".json", "w") as json_file:

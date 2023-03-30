@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ce0906d6-dd23-4115-b58d-b7ca63579712" name="Changes" comment="Updates">
-      <change afterPath="$PROJECT_DIR$/L14_ligand_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/21_binding_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/21_binding_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L14_ligand_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/L21_ligand_model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +57,7 @@
       <recent name="F:\PyCharmProjects\ImmuneApp" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.L14_ligand_model">
+  <component name="RunManager" selected="Python.L21_ligand_model">
     <configuration name="L10_process_ligand" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -137,7 +137,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="L14_ligand_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="L21_ligand_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -147,7 +147,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/L14_ligand_model.py" />
+      <option name="SCRIPT_NAME" value="F:\PyCharmProjects\ImmuneApp\L21_ligand_model.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -181,13 +181,13 @@
     <list>
       <item itemvalue="Python.L12_merge_pos_neg" />
       <item itemvalue="Python.L13_encoding" />
-      <item itemvalue="Python.L14_ligand_model" />
       <item itemvalue="Python.L10_process_ligand" />
       <item itemvalue="Python.L11_process_ligand_negative" />
+      <item itemvalue="Python.L21_ligand_model" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.L14_ligand_model" />
+        <item itemvalue="Python.L21_ligand_model" />
         <item itemvalue="Python.L13_encoding" />
         <item itemvalue="Python.L12_merge_pos_neg" />
         <item itemvalue="Python.L11_process_ligand_negative" />
@@ -207,7 +207,7 @@
       <workItem from="1679879775616" duration="9914000" />
       <workItem from="1679926519663" duration="35923000" />
       <workItem from="1680060694492" duration="1700000" />
-      <workItem from="1680062573383" duration="7992000" />
+      <workItem from="1680062573383" duration="10525000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1679877834347</created>
@@ -300,7 +300,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680119507041</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Updates">
+      <created>1680131713991</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1680131713991</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
