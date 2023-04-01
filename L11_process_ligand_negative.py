@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from collections import Counter
 
-iedb_csv = "data/mhc_ligand_pos.csv"
+iedb_csv = "data/mhc_ligand_pos50.csv"
 iedb_df = pd.read_csv(iedb_csv, sep=',', skiprows=0, low_memory=False, dtype=object)
 iedb_df = np.array(iedb_df)
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     allele_ls = list(pos_data_dict.keys())
     # Pick the amount of processes that works best for you
-    processes = 6
+    processes = 32
     pool = Pool(processes)
     pool.map(random_peptides_job, allele_ls)
     pool.close()

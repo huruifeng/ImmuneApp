@@ -30,3 +30,6 @@ ligand_df.drop(["peplen"], axis=1,inplace=True)
 
 ligand_df = ligand_df.loc[ligand_df.Allele.isin(allele_ls),:]
 ligand_df.to_csv("data/mhc_ligand_pos.csv",index=None)
+
+ligand_df50 = ligand_df.sample(frac=0.5, random_state=12)
+ligand_df50.to_csv("data/mhc_ligand_pos50.csv",index=None)

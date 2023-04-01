@@ -10,7 +10,7 @@ blosum_matrix = read_blosum("data/original_data/blosum50.txt")
 with open("data/allele_pseudo_seq.json", "r") as fp:
     pseudo_seq_dict = json.load(fp)  # encode dict into JSON
 
-ligand_df = pd.read_csv("data/mhc_ligand_pos_neg.csv",index_col=None,header=0)
+ligand_df = pd.read_csv("data/mhc_ligand_pos_neg50.csv",index_col=None,header=0)
 
 allele_ls = ligand_df.Allele.tolist()
 pep_ls = ligand_df.Peptide.tolist()
@@ -66,7 +66,7 @@ def hla_peptide_pairs_encode(ligand_pairs, allele_pseudo_seqs, blosum_matrix):
     return encoded_data
 
 encoded_data = hla_peptide_pairs_encode(ligand_pairs,pseudo_seq_dict,blosum_matrix)
-with open('data/encoded_allele_peptide_ligand.pkl', 'wb') as handle:
+with open('data/encoded_allele_peptide_ligand50.pkl', 'wb') as handle:
     pickle.dump(encoded_data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 

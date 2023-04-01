@@ -23,11 +23,10 @@ tf.random.set_seed(12)
 np.random.seed(12)
 
 ######
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-config.gpu_options.per_process_gpu_memory_fraction = 0.8
-set_session(tf.Session(config=config))
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+gpu_devices = tf.config.experimental.list_physical_devices("GPU")
+for device in gpu_devices:
+    tf.config.experimental.set_memory_growth(device, True)
 
 #################################
 def creat_ligand_model():
@@ -89,7 +88,7 @@ def train_cross_validation(dataset):
         train_pep, train_hla, train_target = encoded_pep[train_index],encoded_hla[train_index],encoded_score[train_index]
         val_pep, val_hla, val_target = encoded_pep[val_index],encoded_hla[val_index],encoded_score[val_index]
 
-        es = EarlyStopping(monitor='val_accuracy', mode='min', verbose=1, patience=5)
+        es = EarlyStopping(monitor='val_accuracy', mode='max', verbose=1, patience=5)
         mc = ModelCheckpoint(folder + '/model_%s.h5' % str(i_splits), monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
 
         model = creat_ligand_model()
@@ -102,7 +101,7 @@ def train_cross_validation(dataset):
             json_file.write(model_json)
 
         model.fit([train_pep, train_hla],train_target,
-                  batch_size=5000,
+                  batch_size=1000,
                   epochs=50,
                   shuffle=True,
                   callbacks=[es, mc],
@@ -113,7 +112,7 @@ def train_cross_validation(dataset):
         probas = saved_model.predict([val_pep, val_hla])
         with open(folder + '/eval_lable_probas_%s.txt' % str(i_splits), "w+") as f:
             for j in range(len(probas)):
-                f.write(str(val_target[j]) + '\t' + str(probas[j]) + '\n')
+                f.write(str(val_target[j]) + '\t' + str(probas[j][0]) + '\n')
 
         allprobas = np.append(allprobas, probas)
         allylable = np.append(allylable, np.array(val_target))
@@ -156,8 +155,7 @@ def train_cross_validation(dataset):
     [label.set_fontname('Times New Roman') for label in labels]
 
     precision, recall, _ = precision_recall_curve(allylable, allprobas)
-    ax2.plot(recall, precision, color='b',
-             label=r'Precision-Recall (AUC = %0.4f)' % (average_precision_score(allylable, allprobas)),
+    ax2.plot(recall, precision, color='b',label=r'Precision-Recall (AUC = %0.4f)' % (average_precision_score(allylable, allprobas)),
              lw=2, alpha=.8)
 
     ax2.set_xlim([-0.05, 1.05])
@@ -171,7 +169,7 @@ def train_cross_validation(dataset):
 
 
 if __name__ == '__main__':
-    with open('data/encoded_allele_peptide_ligand.pkl', 'rb') as handle:
+    with open('data/encoded_allele_peptide_ligand50.pkl', 'rb') as handle:
         encoded_data = pickle.load(handle)
 
     train_cross_validation(encoded_data)

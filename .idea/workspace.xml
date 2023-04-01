@@ -7,7 +7,19 @@
     <list default="true" id="ce0906d6-dd23-4115-b58d-b7ca63579712" name="Changes" comment="Updates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/21_binding_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/21_binding_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/L14_ligand_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/L21_ligand_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L10_process_ligand.py" beforeDir="false" afterPath="$PROJECT_DIR$/L10_process_ligand.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L11_process_ligand_negative.py" beforeDir="false" afterPath="$PROJECT_DIR$/L11_process_ligand_negative.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L12_merge_pos_neg.py" beforeDir="false" afterPath="$PROJECT_DIR$/L12_merge_pos_neg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L13_encoding.py" beforeDir="false" afterPath="$PROJECT_DIR$/L13_encoding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/L21_ligand_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/L21_ligand_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/5_fold_pr.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/5_fold_pr.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/5_fold_roc.png" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/5_fold_roc.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/Evalution_lable_probas.txt" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/Evalution_lable_probas.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/model_0.h5" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/model_0.h5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/model_1.h5" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/model_1.h5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/model_2.h5" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/model_2.h5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/model_3.h5" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/model_3.h5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/results/binding_model/model_4.h5" beforeDir="false" afterPath="$PROJECT_DIR$/results/binding_model/model_4.h5" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,21 +69,18 @@
       <recent name="F:\PyCharmProjects\ImmuneApp" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.L21_ligand_model">
-    <configuration name="L10_process_ligand" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.31_corss_scoring">
+    <configuration name="31_corss_scoring" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/L10_process_ligand.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/31_corss_scoring.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -84,6 +93,9 @@
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -103,6 +115,9 @@
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -122,6 +137,9 @@
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -141,6 +159,9 @@
       <module name="ImmuneApp" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -179,19 +200,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.31_corss_scoring" />
       <item itemvalue="Python.L12_merge_pos_neg" />
       <item itemvalue="Python.L13_encoding" />
-      <item itemvalue="Python.L10_process_ligand" />
-      <item itemvalue="Python.L11_process_ligand_negative" />
       <item itemvalue="Python.L21_ligand_model" />
+      <item itemvalue="Python.L11_process_ligand_negative" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.31_corss_scoring" />
         <item itemvalue="Python.L21_ligand_model" />
         <item itemvalue="Python.L13_encoding" />
         <item itemvalue="Python.L12_merge_pos_neg" />
         <item itemvalue="Python.L11_process_ligand_negative" />
-        <item itemvalue="Python.L10_process_ligand" />
       </list>
     </recent_temporary>
   </component>
@@ -207,7 +228,8 @@
       <workItem from="1679879775616" duration="9914000" />
       <workItem from="1679926519663" duration="35923000" />
       <workItem from="1680060694492" duration="1700000" />
-      <workItem from="1680062573383" duration="10525000" />
+      <workItem from="1680062573383" duration="12769000" />
+      <workItem from="1680309775979" duration="6491000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1679877834347</created>
@@ -307,7 +329,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680131713991</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Updates">
+      <created>1680136896060</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1680136896060</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

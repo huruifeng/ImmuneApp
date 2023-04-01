@@ -6,8 +6,6 @@ import numpy as np
 
 import tensorflow as tf
 
-from math import log
-
 from keras.backend import set_session
 from keras.models import Model, load_model
 from keras.layers import Input, Dense, Permute, Flatten, Concatenate, Dot, TimeDistributed, Activation
@@ -26,11 +24,7 @@ tf.random.set_seed(12)
 np.random.seed(12)
 
 ######
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
-config = tf.ConfigProto()
-config.gpu_options.allow_growth = True
-config.gpu_options.per_process_gpu_memory_fraction = 0.8
-set_session(tf.Session(config=config))
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 #################################
 def creat_binding_affinity_model():
@@ -113,10 +107,10 @@ def train_cross_validation(dataset):
 
         saved_model = load_model(folder + '/model_%s.h5' % str(i_splits))
         probas = saved_model.predict([val_pep, val_hla])
-        val_label = [1 if aff > (1 - log(500) / log(50000)) else 0 for aff in val_target]
+        val_label = [1 if aff > (1 - np.log(500) / np.log(50000)) else 0 for aff in val_target]
         with open(folder + '/eval_lable_probas_%s.txt' % str(i_splits), "w+") as f:
             for j in range(len(probas)):
-                f.write(str(val_label[j]) + '\t' + str(probas[j]) + '\n')
+                f.write(str(val_label[j]) + '\t' + str(probas[j][0]) + '\n')
 
         allprobas = np.append(allprobas, probas)
         allylable = np.append(allylable, np.array(val_label))
