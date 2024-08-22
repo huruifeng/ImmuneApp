@@ -19,12 +19,11 @@ pip install -v keras==2.3.1
 pip install -v tensorflow==1.15
 pip install seaborn
 pip install logomaker
-pip install shutil
 pip install pathlib
 pip install protobuf==3.20
 pip install h5py==2.10.0
 ```
-### Note: please unzip the gibbscluster-2.0f.Linux.tar.gz in the folder first, and modify the "FULL PATH" in the gibbscluster execution file
+### Note: please unzip the gibbscluster-2.0f.Linux.tar.gz in any folder, and make sure the user have the read and execute permission on the gibbscluster program, then modify the 'GIBBSCLUSTER' parameter in line 555 of the file "ImmuneApp_immunopeptidomics_analysis.py' to the gibbscluster execution file
 
 # Usage
 ### ImmuneApp provides three services: prediction of antigen presentation, scoring for neoepitope immunogenicity, and immunopeptidomics analysis, with enhanced precision.
